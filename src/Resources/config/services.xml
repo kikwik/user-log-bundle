@@ -8,6 +8,7 @@
     <service id="kikwik_user_log.event_subscriber.user_log_subscriber" class="Kikwik\UserLogBundle\EventSubscriber\UserLogSubscriber">
       <tag name="kernel.event_subscriber" />
       <argument type="service" id="security.helper"/>
+      <argument type="service" id="doctrine.orm.entity_manager"/>
     </service>
 
 
