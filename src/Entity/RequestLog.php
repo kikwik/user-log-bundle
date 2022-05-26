@@ -45,9 +45,16 @@ class RequestLog
 
     public function getDataHtml()
     {
-        if($this->data && substr($this->data,0,1)=='{')
+        if($this->data)
         {
-            return '<a href="#data-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="data-'.$this->id.'">'.json_encode(json_decode($this->data), JSON_PRETTY_PRINT).'</pre></div>';
+            if(substr($this->data,0,1)=='{')
+            {
+                return '<a href="#data-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="data-'.$this->id.'" class="p-5">'.json_encode(json_decode($this->data), JSON_PRETTY_PRINT).'</pre></div>';
+            }
+            else
+            {
+                return '<a href="#data-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="data-'.$this->id.'" class="p-5">'.$this->data.'</pre></div>';
+            }
         }
         return $this->data;
     }
