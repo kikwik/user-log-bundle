@@ -5,6 +5,10 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
   <services>
 
+    <service id="kikwik_user_log.event_subscriber.user_log_subscriber" class="Kikwik\UserLogBundle\EventSubscriber\UserLogSubscriber">
+      <tag name="kernel.event_subscriber" />
+      <argument type="service" id="security.helper"/>
+    </service>
 
 
   </services>
