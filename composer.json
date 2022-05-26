@@ -1,0 +1,21 @@
+{
+    "name": "kikwik/user-log-bundle",
+    "description": "Log authenticated user actions",
+    "type": "symfony-bundle",
+    "require": {
+        "php": "^7.2.5",
+        "symfony/framework-bundle": "^5.3|^6.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kikwik\\UserLogBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Klaus",
+            "email": "support@kikwik.it"
+        }
+    ]
+}
