@@ -25,11 +25,14 @@ class UserLogSubscriber implements EventSubscriberInterface
      */
     private $entityManager;
 
+    /** @var boolean */
+    private $enableLog;
 
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    public function __construct(Security $security, EntityManagerInterface $entityManager, bool $enableLog)
     {
         $this->security = $security;
         $this->entityManager = $entityManager;
+        $this->enableLog = $enableLog;
     }
 
     public static function getSubscribedEvents()
@@ -43,38 +46,41 @@ class UserLogSubscriber implements EventSubscriberInterface
     private $requestLog = null;
     public function logRequest(RequestEvent $event)
     {
-        if($event->isMainRequest())
+        if($this->enableLog)
         {
-            if($user = $this->security->getUser())
+            if($event->isMainRequest())
             {
-                // collect log data
-                $sessionId = $event->getRequest()->getSession()->getId();
-                $remoteIp =  $event->getRequest()->getClientIp();
-                $controller = $event->getRequest()->attributes->get('_controller');
-                $method =  $event->getRequest()->getMethod();
-                $pathInfo = $event->getRequest()->getPathInfo();
-                if($event->getRequest()->request && $method=='POST'){
-                    $parameters = json_encode($event->getRequest()->request->all());
-                }else{
-                    $parameters = urldecode($event->getRequest()->getQueryString());
-                }
-
-                // save log data
-                $sessionLog = $this->entityManager->getRepository(SessionLog::class)->findOneBY(['user'=>$user, 'sessionId'=>$sessionId]);
-                if(!$sessionLog)
+                if($user = $this->security->getUser())
                 {
-                    $sessionLog = new SessionLog();
+                    // collect log data
+                    $sessionId = $event->getRequest()->getSession()->getId();
+                    $remoteIp =  $event->getRequest()->getClientIp();
+                    $controller = $event->getRequest()->attributes->get('_controller');
+                    $method =  $event->getRequest()->getMethod();
+                    $pathInfo = $event->getRequest()->getPathInfo();
+                    if($event->getRequest()->request && $method=='POST'){
+                        $parameters = json_encode($event->getRequest()->request->all());
+                    }else{
+                        $parameters = urldecode($event->getRequest()->getQueryString());
+                    }
+
+                    // save log data
+                    $sessionLog = $this->entityManager->getRepository(SessionLog::class)->findOneBY(['user'=>$user, 'sessionId'=>$sessionId]);
+                    if(!$sessionLog)
+                    {
+                        $sessionLog = new SessionLog();
+                    }
+                    $sessionLog->setData($user, $sessionId, $remoteIp);
+
+                    $requestLog = new RequestLog();
+                    $requestLog->setData($sessionLog, $controller, $method, $pathInfo, $parameters);
+
+                    $this->entityManager->persist($requestLog);
+                    $this->entityManager->persist($sessionLog);
+                    $this->entityManager->flush();
+
+                    $this->requestLog = $requestLog;
                 }
-                $sessionLog->setData($user, $sessionId, $remoteIp);
-
-                $requestLog = new RequestLog();
-                $requestLog->setData($sessionLog, $controller, $method, $pathInfo, $parameters);
-
-                $this->entityManager->persist($requestLog);
-                $this->entityManager->persist($sessionLog);
-                $this->entityManager->flush();
-
-                $this->requestLog = $requestLog;
             }
         }
     }

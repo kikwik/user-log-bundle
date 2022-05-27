@@ -1,3 +1,10 @@
+sidebar:
+    user_logs:
+        title:  Logs
+        icon:   fas fa-history
+        submenu:
+            log_session:     { title: Sessioni,  route: kikwik_admin_user_log_session }
+            log_request:     { title: Dettagli,  route: kikwik_admin_user_log_request }
 admins:
     user_log_session:
         entityClass: Kikwik\UserLogBundle\Entity\SessionLog
@@ -7,6 +14,7 @@ admins:
         gender: female
         fields:
             user:             { label: Utente }
+            userIdentifier:   { label: Utente }
             sessionId:        { label: Identificativo }
             remoteIp:         { label: IP utente }
             createdAt:        { label: Prima richiesta }
@@ -18,6 +26,7 @@ admins:
             display: [ user, sessionId, remoteIp, createdAt, updatedAt, requestLogsCount, duration ]
             export: [ user, sessionId, remoteIp, createdAt, updatedAt, requestLogsCount, duration ]
             sort: [ updatedAt, desc ]
+            filters: [ userIdentifier, createdAt, updatedAt ]
             actions:
                 new:  { enabled: false }
         object:

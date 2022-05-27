@@ -27,12 +27,7 @@ Configuration
 -------------
 
 ```yaml
-kikwik_admin:
-    sidebar:
-        user_logs:
-            title:  Logs
-            icon:   fas fa-history
-            submenu:
-                log_session:     { title: Sessioni,  route: kikwik_admin_user_log_session }
-                log_request:     { title: Dettagli,  route: kikwik_admin_user_log_request }        
+kikwik_user_log:
+    enable_admin: false  # default is true
+    enable_log: false  # default is true
 ```

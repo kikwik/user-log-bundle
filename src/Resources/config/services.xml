@@ -9,6 +9,7 @@
       <tag name="kernel.event_subscriber" />
       <argument type="service" id="security.helper"/>
       <argument type="service" id="doctrine.orm.entity_manager"/>
+      <argument>$enableLog</argument>
     </service>
 
 

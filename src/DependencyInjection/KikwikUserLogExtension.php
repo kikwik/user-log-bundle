@@ -15,6 +15,10 @@ class KikwikUserLogExtension extends Extension implements PrependExtensionInterf
 {
     public function prepend(ContainerBuilder $container)
     {
+        $configs = $container->getExtensionConfig($this->getAlias());
+        if(isset($configs[0]['enable_admin']) && !$configs[0]['enable_admin'])
+            return;
+
         $bundles = $container->getParameter('kernel.bundles');
         if (isset($bundles['KikwikAdminBundle']))
         {
@@ -31,6 +35,8 @@ class KikwikUserLogExtension extends Extension implements PrependExtensionInterf
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $userLogSubscriber = $container->getDefinition('kikwik_user_log.event_subscriber.user_log_subscriber');
+        $userLogSubscriber->setArgument('$enableLog', $config['enable_log']);
     }
 
 }
