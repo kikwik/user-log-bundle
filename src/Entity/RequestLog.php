@@ -12,7 +12,10 @@ class RequestLog
     private $id;
 
     /** @var string */
-    private $action;
+    private $sessionLogIdentifier;
+
+    /** @var string */
+    private $controller;
 
     /** @var string */
     private $method;
@@ -21,7 +24,7 @@ class RequestLog
     private $pathInfo;
 
     /** @var string */
-    private $data;
+    private $parameters;
 
     /** @var \DateTime */
     private $createdAt;
@@ -35,33 +38,45 @@ class RequestLog
 
     public function __toString()
     {
-        return $this->createdAt->format('[Y-m-d H:i:s]').' '.$this->method.' '.$this->pathInfo.' '.$this->data;
+        return $this->createdAt->format('[Y-m-d H:i:s]').' '.$this->method.' '.$this->pathInfo.' '.$this->parameters;
     }
 
-    public function getSessionId()
+    public function setData(SessionLog $sessionLog, string $controller, string $method, string $pathInfo, string $parameters)
     {
-        return $this->sessionLog->getSessionId();
+        $this->sessionLog = $sessionLog;
+        $this->sessionLogIdentifier = $sessionLog->__toString();
+        $this->controller = $controller;
+        $this->method = $method;
+        $this->pathInfo = $pathInfo;
+        $this->parameters = $parameters;
+        $this->createdAt = new \DateTime();
     }
 
-    public function getDataHtml()
+    public function getMethodAndControllerHtml()
     {
-        if($this->data)
+        return '<span data-toggle="tooltip" title="'.$this->controller.'">'.$this->method.'</span>';
+    }
+
+    public function getParametersHtml()
+    {
+        if($this->parameters)
         {
-            if(substr($this->data,0,1)=='{')
+            if(substr($this->parameters,0,1)=='{')
             {
-                return '<a href="#data-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="data-'.$this->id.'" class="p-5">'.json_encode(json_decode($this->data), JSON_PRETTY_PRINT).'</pre></div>';
+                return '<a href="#params-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="params-'.$this->id.'" class="p-5">'.json_encode(json_decode($this->parameters), JSON_PRETTY_PRINT).'</pre></div>';
             }
             else
             {
-                return '<a href="#data-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="data-'.$this->id.'" class="p-5">'.$this->data.'</pre></div>';
+                return '<span data-toggle="tooltip" title="'.$this->parameters.'"><i class="fas fa-info-circle"></i></span>';
             }
         }
-        return $this->data;
+        return $this->parameters;
     }
 
     /**************************************/
-    /* GETTERS & SETTERS                  */
+    /* GETTERS                            */
     /**************************************/
+
 
     /**
      * @return int
@@ -74,19 +89,17 @@ class RequestLog
     /**
      * @return string
      */
-    public function getAction(): string
+    public function getSessionLogIdentifier(): string
     {
-        return $this->action;
+        return $this->sessionLogIdentifier;
     }
 
     /**
-     * @param string $action
-     * @return RequestLog
+     * @return string
      */
-    public function setAction(string $action): RequestLog
+    public function getController(): string
     {
-        $this->action = $action;
-        return $this;
+        return $this->controller;
     }
 
     /**
@@ -98,16 +111,6 @@ class RequestLog
     }
 
     /**
-     * @param string $method
-     * @return RequestLog
-     */
-    public function setMethod(string $method): RequestLog
-    {
-        $this->method = $method;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getPathInfo(): string
@@ -116,31 +119,11 @@ class RequestLog
     }
 
     /**
-     * @param string $pathInfo
-     * @return RequestLog
-     */
-    public function setPathInfo(string $pathInfo): RequestLog
-    {
-        $this->pathInfo = $pathInfo;
-        return $this;
-    }
-
-    /**
      * @return string
      */
-    public function getData(): string
+    public function getParameters(): string
     {
-        return $this->data;
-    }
-
-    /**
-     * @param string $data
-     * @return RequestLog
-     */
-    public function setData(string $data): RequestLog
-    {
-        $this->data = $data;
-        return $this;
+        return $this->parameters;
     }
 
     /**
@@ -152,16 +135,6 @@ class RequestLog
     }
 
     /**
-     * @param \DateTime $createdAt
-     * @return RequestLog
-     */
-    public function setCreatedAt(\DateTime $createdAt): RequestLog
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    /**
      * @return SessionLog
      */
     public function getSessionLog(): SessionLog
@@ -169,15 +142,6 @@ class RequestLog
         return $this->sessionLog;
     }
 
-    /**
-     * @param SessionLog $sessionLog
-     * @return RequestLog
-     */
-    public function setSessionLog(SessionLog $sessionLog): RequestLog
-    {
-        $this->sessionLog = $sessionLog;
-        return $this;
-    }
 
 
 }

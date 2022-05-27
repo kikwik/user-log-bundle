@@ -17,7 +17,7 @@ class SessionLogController extends CRUDController
         }
         $this->checkPermission('show',$object);
 
-        return $this->redirect($this->generateUrl('kikwik_admin_user_log_request').'?filters[sessionLog][operator]=uguale a&filters[sessionLog][value]='.$object->getId());
+        return $this->redirect($this->generateUrl('kikwik_admin_user_log_request').'?filters[sessionLogIdentifier][operator]=uguale a&filters[sessionLogIdentifier][value]='.$object->__toString());
     }
 
 }

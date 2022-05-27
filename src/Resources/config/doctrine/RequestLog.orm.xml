@@ -8,10 +8,11 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
-        <field name="action" type="string" length="255"/>
+        <field name="sessionLogIdentifier" type="string" length="255" />
+        <field name="controller" type="string" length="255"/>
         <field name="method" type="string" length="255"/>
         <field name="pathInfo" type="string" length="255"/>
-        <field name="data" type="text" />
+        <field name="parameters" type="text" />
         <field name="createdAt" type="datetime" />
 
         <many-to-one field="sessionLog" target-entity="SessionLog" inversed-by="requestLogs">

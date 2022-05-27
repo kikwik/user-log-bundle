@@ -19,6 +19,12 @@ class SessionLog
     /** @var string */
     private $sessionId;
 
+    /** @var UserInterface */
+    private $user;
+
+    /** @var string */
+    private $userIdentifier;
+
     /** @var string */
     private $remoteIp;
 
@@ -28,11 +34,14 @@ class SessionLog
     /** @var \DateTime */
     private $updatedAt;
 
+    /** @var string */
+    private $duration;
+
     /** @var Collection */
     private $requestLogs;
 
-    /** @var UserInterface */
-    private $user;
+    /** @var integer */
+    private $requestLogsCount = 0;
 
     public function __construct()
     {
@@ -45,23 +54,36 @@ class SessionLog
 
     public function __toString()
     {
-        return 'Sessione del '.$this->createdAt->format('d/m/Y H:i:s');
+        return $this->getUser().' - '.$this->sessionId;
     }
 
-    public function getRequestLogsCount()
+    public function setData(UserInterface $user, string $sessionId, string $remoteIp)
     {
-        return $this->requestLogs->count();
+        $this->user = $user;
+        $this->userIdentifier = $user->getUserIdentifier();
+        $this->sessionId = $sessionId;
+        $this->remoteIp = $remoteIp;
+        if(!$this->createdAt)
+        {
+            $this->createdAt = new \DateTime();
+            $this->updatedAt = new \DateTime();
+            $this->duration = '00:00:00';
+            $this->requestLogsCount = 1;
+        }
+        else
+        {
+            $this->updatedAt = new \DateTime();
+            $diff = $this->updatedAt->diff($this->createdAt);
+            $this->duration = $diff->format('%H:%I:%S');
+            $this->requestLogsCount++;
+        }
     }
 
-    public function getDuration()
-    {
-        $diff = $this->updatedAt->diff($this->createdAt);
-        return $diff->format('%H:%I:%S');
-    }
 
     /**************************************/
-    /* GETTERS & SETTERS                  */
+    /* GETTERS                            */
     /**************************************/
+
 
     /**
      * @return int
@@ -80,13 +102,19 @@ class SessionLog
     }
 
     /**
-     * @param string $sessionId
-     * @return SessionLog
+     * @return UserInterface
      */
-    public function setSessionId(string $sessionId): SessionLog
+    public function getUser(): UserInterface
     {
-        $this->sessionId = $sessionId;
-        return $this;
+        return $this->user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserIdentifier(): string
+    {
+        return $this->userIdentifier;
     }
 
     /**
@@ -98,31 +126,11 @@ class SessionLog
     }
 
     /**
-     * @param string $remoteIp
-     * @return SessionLog
-     */
-    public function setRemoteIp(string $remoteIp): SessionLog
-    {
-        $this->remoteIp = $remoteIp;
-        return $this;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return SessionLog
-     */
-    public function setCreatedAt(\DateTime $createdAt): SessionLog
-    {
-        $this->createdAt = $createdAt;
-        return $this;
     }
 
     /**
@@ -134,52 +142,28 @@ class SessionLog
     }
 
     /**
-     * @param \DateTime $updatedAt
-     * @return SessionLog
+     * @return string
      */
-    public function setUpdatedAt(\DateTime $updatedAt): SessionLog
+    public function getDuration(): string
     {
-        $this->updatedAt = $updatedAt;
-        return $this;
+        return $this->duration;
     }
 
     /**
-     * @return RequestLog[]
+     * @return Collection
      */
-    public function getRequestLogs(): Collection
+    public function getRequestLogs()
     {
         return $this->requestLogs;
     }
 
     /**
-     * @param RequestLog[] $requestLogs
-     * @return SessionLog
+     * @return int
      */
-    public function setRequestLogs(array $requestLogs): SessionLog
+    public function getRequestLogsCount(): int
     {
-        $this->requestLogs = $requestLogs;
-        return $this;
+        return $this->requestLogsCount;
     }
-
-    /**
-     * @return UserInterface
-     */
-    public function getUser(): UserInterface
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param UserInterface $user
-     * @return SessionLog
-     */
-    public function setUser(UserInterface $user): SessionLog
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-
 
 
 }

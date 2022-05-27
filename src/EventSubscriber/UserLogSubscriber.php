@@ -48,13 +48,13 @@ class UserLogSubscriber implements EventSubscriberInterface
                 // collect log data
                 $sessionId = $event->getRequest()->getSession()->getId();
                 $remoteIp =  $event->getRequest()->getClientIp();
-                $action = $event->getRequest()->attributes->get('_controller');
+                $controller = $event->getRequest()->attributes->get('_controller');
                 $method =  $event->getRequest()->getMethod();
                 $pathInfo = $event->getRequest()->getPathInfo();
                 if($event->getRequest()->request && $method=='POST'){
-                    $data = json_encode($event->getRequest()->request->all());
+                    $parameters = json_encode($event->getRequest()->request->all());
                 }else{
-                    $data = urldecode($event->getRequest()->getQueryString());
+                    $parameters = urldecode($event->getRequest()->getQueryString());
                 }
 
                 // save log data
@@ -62,22 +62,13 @@ class UserLogSubscriber implements EventSubscriberInterface
                 if(!$sessionLog)
                 {
                     $sessionLog = new SessionLog();
-                    $sessionLog->setUser($user);
-                    $sessionLog->setSessionId($sessionId);
-                    $sessionLog->setRemoteIp($remoteIp);
-                    $sessionLog->setCreatedAt(new \DateTime());
                 }
-                $sessionLog->setUpdatedAt(new \DateTime);
+                $sessionLog->setData($user, $sessionId, $remoteIp);
 
-                $actionLog = new RequestLog();
-                $actionLog->setSessionLog($sessionLog);
-                $actionLog->setAction($action);
-                $actionLog->setMethod($method);
-                $actionLog->setPathInfo($pathInfo);
-                $actionLog->setData($data);
-                $actionLog->setCreatedAt(new \DateTime());
+                $requestLog = new RequestLog();
+                $requestLog->setData($sessionLog, $controller, $method, $pathInfo, $parameters);
 
-                $this->entityManager->persist($actionLog);
+                $this->entityManager->persist($requestLog);
                 $this->entityManager->persist($sessionLog);
                 $this->entityManager->flush();
 
