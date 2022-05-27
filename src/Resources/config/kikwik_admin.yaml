@@ -51,11 +51,12 @@ admins:
             responseStatusCodeHtml:     { label: Status code, sortPath: responseStatusCode }
             pathInfo:                   { label: Url }
             parameters:                 { label: Parametri }
+            obfuscatedParameters:       { label: Parametri }
             parametersHtml:             { label: Parametri, sortPath: parameters }
             createdAt:                  { label: Data richiesta }
         collection:
             display: [ createdAt, sessionLogIdentifier, methodAndControllerHtml, responseStatusCodeHtml, pathInfo, parametersHtml ]
-            export: [ createdAt, sessionLogIdentifier, controller, method, responseStatusCode, responseStatusText, pathInfo, parameters ]
+            export: [ createdAt, sessionLogIdentifier, controller, method, responseStatusCode, responseStatusText, pathInfo, obfuscatedParameters ]
             filters: [ sessionLogIdentifier, method, responseStatusCode, pathInfo, parameters ]
             sort: [ createdAt, asc ]
             paginationSize: 100

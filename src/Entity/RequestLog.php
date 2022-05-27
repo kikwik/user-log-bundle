@@ -63,13 +63,21 @@ class RequestLog
         return '<span data-toggle="tooltip" title="'.$this->controller.'">'.$this->method.'</span>';
     }
 
+    public function getObfuscatedParameters()
+    {
+        $re = '/"(\w*password\w*)":{"first":"(\w*)","second":"(\w*)"}/mi';
+        $subst = '"$1":{"first":"***","second":"***"}';
+        $result = preg_replace($re, $subst, $this->parameters);
+        return $result;
+    }
+
     public function getParametersHtml()
     {
         if($this->parameters)
         {
             if(substr($this->parameters,0,1)=='{')
             {
-                return '<a href="#params-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="params-'.$this->id.'" class="p-5">'.json_encode(json_decode($this->parameters), JSON_PRETTY_PRINT).'</pre></div>';
+                return '<a href="#params-'.$this->id.'" title="'.$this->pathInfo.'" data-emodal="inline"><i class="fas fa-info-circle"></i></a><div class="d-none"><pre id="params-'.$this->id.'" class="p-5">'.json_encode(json_decode($this->getObfuscatedParameters()), JSON_PRETTY_PRINT).'</pre></div>';
             }
             else
             {
