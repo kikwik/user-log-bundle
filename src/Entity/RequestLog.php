@@ -31,7 +31,13 @@ class RequestLog
 
     /** @var SessionLog */
     private $sessionLog;
+    
+    /** @var integer */
+    private $responseStatusCode;
 
+    /** @var string */
+    private $responseStatusText;
+    
     /**************************************/
     /* CUSTOM METHODS                     */
     /**************************************/
@@ -71,6 +77,17 @@ class RequestLog
             }
         }
         return $this->parameters;
+    }
+
+    public function getResponseStatusCodeHtml()
+    {
+        $class = 'badge-default';
+        if($this->responseStatusCode >= 200 && $this->responseStatusCode < 300) $class = 'badge-success';
+        if($this->responseStatusCode >= 300 && $this->responseStatusCode < 400) $class = 'badge-info';
+        if($this->responseStatusCode >= 400 && $this->responseStatusCode < 500) $class = 'badge-warning';
+        if($this->responseStatusCode >= 500 && $this->responseStatusCode < 600) $class = 'badge-danger';
+
+        return '<span class="badge '.$class.'" data-toggle="tooltip" title="'.$this->responseStatusText.'">'.$this->responseStatusCode.'</span>';
     }
 
     /**************************************/
@@ -142,6 +159,41 @@ class RequestLog
         return $this->sessionLog;
     }
 
+    /**
+     * @return int
+     */
+    public function getResponseStatusCode(): ?int
+    {
+        return $this->responseStatusCode;
+    }
 
+    /**
+     * @param int $responseStatusCode
+     * @return RequestLog
+     */
+    public function setResponseStatusCode(?int $responseStatusCode): RequestLog
+    {
+        $this->responseStatusCode = $responseStatusCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseStatusText(): ?string
+    {
+        return $this->responseStatusText;
+    }
+
+    /**
+     * @param string $responseStatusText
+     * @return RequestLog
+     */
+    public function setResponseStatusText(?string $responseStatusText): RequestLog
+    {
+        $this->responseStatusText = $responseStatusText;
+        return $this;
+    }
+    
 
 }

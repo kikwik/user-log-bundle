@@ -14,6 +14,8 @@
         <field name="pathInfo" type="string" length="255"/>
         <field name="parameters" type="text" />
         <field name="createdAt" type="datetime" />
+        <field name="responseStatusCode" type="integer" nullable="true" />
+        <field name="responseStatusText" type="string" length="255" nullable="true" />
 
         <many-to-one field="sessionLog" target-entity="SessionLog" inversed-by="requestLogs">
             <join-column name="session_log_id" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>

@@ -35,10 +35,12 @@ class UserLogSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'logRequest'
+            KernelEvents::REQUEST => 'logRequest',
+            KernelEvents::RESPONSE => 'logResponse',
         ];
     }
 
+    private $requestLog = null;
     public function logRequest(RequestEvent $event)
     {
         if($event->isMainRequest())
@@ -72,7 +74,19 @@ class UserLogSubscriber implements EventSubscriberInterface
                 $this->entityManager->persist($sessionLog);
                 $this->entityManager->flush();
 
+                $this->requestLog = $requestLog;
             }
+        }
+    }
+    
+    public function logResponse(ResponseEvent $event)
+    {
+        if($this->requestLog)
+        {
+            $this->requestLog->setResponseStatusCode($event->getResponse()->getStatusCode());
+            $this->requestLog->setResponseStatusText($event->getResponse()::$statusTexts[$event->getResponse()->getStatusCode()]);
+            $this->entityManager->persist($this->requestLog);
+            $this->entityManager->flush();
         }
     }
 }

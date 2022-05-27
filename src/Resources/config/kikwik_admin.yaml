@@ -37,15 +37,17 @@ admins:
             sessionId:                  { label: Identificativo }
             action:                     { label: Controller }
             method:                     { label: Metodo }
-            methodAndControllerHtml:    { label: Metodo }
+            methodAndControllerHtml:    { label: Metodo, sortPath: method }
+            responseStatusCode:         { label: Status code }
+            responseStatusCodeHtml:     { label: Status code, sortPath: responseStatusCode }
             pathInfo:                   { label: Url }
             parameters:                 { label: Parametri }
-            parametersHtml:             { label: Parametri }
+            parametersHtml:             { label: Parametri, sortPath: parameters }
             createdAt:                  { label: Data richiesta }
         collection:
-            display: [ createdAt, sessionLogIdentifier, methodAndControllerHtml, pathInfo, parametersHtml ]
-            export: [ createdAt, sessionLogIdentifier, controller, method, pathInfo, parameters ]
-            filters: [ sessionLogIdentifier, method, pathInfo, parameters ]
+            display: [ createdAt, sessionLogIdentifier, methodAndControllerHtml, responseStatusCodeHtml, pathInfo, parametersHtml ]
+            export: [ createdAt, sessionLogIdentifier, controller, method, responseStatusCode, responseStatusText, pathInfo, parameters ]
+            filters: [ sessionLogIdentifier, method, responseStatusCode, pathInfo, parameters ]
             sort: [ createdAt, asc ]
             paginationSize: 100
             actions:
