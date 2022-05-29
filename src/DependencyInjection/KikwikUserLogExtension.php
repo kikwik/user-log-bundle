@@ -16,14 +16,18 @@ class KikwikUserLogExtension extends Extension implements PrependExtensionInterf
     public function prepend(ContainerBuilder $container)
     {
         $configs = $container->getExtensionConfig($this->getAlias());
-        if(isset($configs[0]['enable_admin']) && !$configs[0]['enable_admin'])
-            return;
+        $enableAdmin = isset($configs[0]['enable_admin'])
+            ? $configs[0]['enable_admin']
+            : true;
 
-        $bundles = $container->getParameter('kernel.bundles');
-        if (isset($bundles['KikwikAdminBundle']))
+        if($enableAdmin)
         {
-            $configForAdmin = Yaml::parseFile(__DIR__.'/../Resources/config/kikwik_admin.yaml');
-            $container->prependExtensionConfig('kikwik_admin', $configForAdmin);
+            $bundles = $container->getParameter('kernel.bundles');
+            if (isset($bundles['KikwikAdminBundle']))
+            {
+                $configForAdmin = Yaml::parseFile(__DIR__.'/../Resources/config/kikwik_admin.yaml');
+                $container->prependExtensionConfig('kikwik_admin', $configForAdmin);
+            }
         }
     }
 

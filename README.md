@@ -28,6 +28,6 @@ Configuration
 
 ```yaml
 kikwik_user_log:
-    enable_admin: false  # default is true
-    enable_log: false  # default is true
+    enable_admin: true  # default is true
+    enable_log: true  # default is true
 ```
