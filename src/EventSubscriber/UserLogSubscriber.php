@@ -92,7 +92,17 @@ class UserLogSubscriber implements EventSubscriberInterface
             $this->requestLog->setResponseStatusCode($event->getResponse()->getStatusCode());
             $this->requestLog->setResponseStatusText($event->getResponse()::$statusTexts[$event->getResponse()->getStatusCode()]);
             $this->entityManager->persist($this->requestLog);
-            $this->entityManager->flush();
+            try
+            {
+                // when an entity is deleted and has the @Gedmo\SoftDeleteable annotation and is related with other objects
+                // caling the flush() will throw the error "Multiple non-persisted new entities were found through the given association graph:"
+                // in this case we cannot save the response status code
+                $this->entityManager->flush();
+            }
+            catch (\Throwable $e)
+            {
+                // nothing here
+            }
         }
     }
 }
